@@ -1,43 +1,35 @@
-name: Build HiSuite Proxy
+name: Build and Upload Artifact
 
 on:
   push:
     branches:
-      - master
-  pull_request:
-    branches:
-      - master
+      - master  # Ensuring it runs only for the master branch
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      # Checkout the code from the repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      # Setup .NET environment
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '6.0.x'  # Ensure this is the correct version for your project
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'  # Make sure to use the correct .NET version
 
-      # Install missing NuGet packages
-      - name: Install NuGet packages
-        run: |
-          dotnet restore "HiSuite Proxy.sln"
+    - name: Restore dependencies
+      run: dotnet restore "HiSuite Proxy.sln"
 
-      # Build the solution
-      - name: Build solution
-        run: |
-          dotnet build "HiSuite Proxy.sln" --configuration Release --runtime win-x64
+    - name: Build Solution
+      run: dotnet build "HiSuite Proxy.sln" --configuration Release
 
-      # Upload the build artifact if successful
-      - name: Upload build artifact
-        if: success()  # Only run if the build succeeds
-        uses: actions/upload-artifact@v3
-        with:
-          name: HiSuite-Proxy-Build
-          path: |
-            **/bin/Release/**
+    - name: Publish for Windows x64
+      run: dotnet publish "HiSuite Proxy.csproj" --configuration Release --runtime win-x64 --output ./publish
+
+    - name: Upload Artifact
+      if: success()  # Only upload if the build and publish steps succeed
+      uses: actions/upload-artifact@v3
+      with:
+        name: HiSuite-Proxy-Artifact
+        path: ./publish  # The output path from the publish step
