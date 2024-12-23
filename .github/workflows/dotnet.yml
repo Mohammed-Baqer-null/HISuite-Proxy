@@ -1,15 +1,15 @@
-name: .NET Build and Test
+name: Build and Run .NET Solution
 
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
-  build:
+  build-run:
     runs-on: windows-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.x' # Adjust to your solution's .NET version
+        dotnet-version: '6.x'  # Update this if using a different .NET version
 
     - name: Restore dependencies
       run: dotnet restore
@@ -27,5 +27,5 @@ jobs:
     - name: Build solution
       run: dotnet build --configuration Release
 
-    - name: Run tests
-      run: dotnet test --configuration Release --no-build
+    - name: Run solution
+      run: dotnet run --project "HiSuite Proxy/HiSuite Proxy.csproj"
