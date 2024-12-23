@@ -3,7 +3,7 @@ name: Build and Upload Artifact
 on:
   push:
     branches:
-      - master  # Ensuring it runs only for the master branch
+      - master  # Change this if your default branch is different
 
 jobs:
   build:
@@ -13,23 +13,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '9.0.x'  # Make sure to use the correct .NET version
+    - name: Setup MSBuild (if necessary)
+      uses: microsoft/setup-msbuild@v1.1
 
     - name: Restore dependencies
-      run: dotnet restore "HiSuite Proxy.sln"
+      run: nuget restore "HiSuite Proxy.sln"
 
-    - name: Build Solution
-      run: dotnet build "HiSuite Proxy.sln" --configuration Release
+    - name: Build Solution with MSBuild
+      run: msbuild "HiSuite Proxy.sln" /p:Configuration=Release /p:Platform="x64"
 
     - name: Publish for Windows x64
-      run: dotnet publish "HiSuite Proxy.csproj" --configuration Release --runtime win-x64 --output ./publish
+      run: msbuild "HiSuite Proxy.sln" /p:Configuration=Release /p:Platform="x64" /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:PublishUrl=./publish
 
     - name: Upload Artifact
       if: success()  # Only upload if the build and publish steps succeed
       uses: actions/upload-artifact@v3
       with:
         name: HiSuite-Proxy-Artifact
-        path: ./publish  # The output path from the publish step
+        path: ./publish  # The output directory from publish step
