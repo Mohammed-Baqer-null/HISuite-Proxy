@@ -21,19 +21,21 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'  # Update this if your project uses a different .NET version
+          dotnet-version: '6.0.x'  # Ensure this is the correct version for your project
 
-      # Restore NuGet packages
-      - name: Restore dependencies
-        run: dotnet restore "HiSuite Proxy.sln"
+      # Install missing NuGet packages
+      - name: Install NuGet packages
+        run: |
+          dotnet restore "HiSuite Proxy.sln"
 
       # Build the solution
       - name: Build solution
-        run: dotnet build "HiSuite Proxy.sln" --configuration Release
+        run: |
+          dotnet build "HiSuite Proxy.sln" --configuration Release --runtime win-x64
 
-      # Upload the built artifact if the build succeeds
+      # Upload the build artifact if successful
       - name: Upload build artifact
-        if: success() # Only run if the build step succeeds
+        if: success()  # Only run if the build succeeds
         uses: actions/upload-artifact@v3
         with:
           name: HiSuite-Proxy-Build
