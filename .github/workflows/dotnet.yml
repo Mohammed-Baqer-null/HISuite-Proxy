@@ -1,4 +1,4 @@
-name: Build and Run .NET Solution
+name: Build HiSuite Proxy
 
 on:
   push:
@@ -9,31 +9,33 @@ on:
       - master
 
 jobs:
-  build-run:
+  build:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Checkout the code from the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '5.x' # Specify your .NET version
+      # Setup .NET environment
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x' # Update this to the version of .NET used by your project
 
-    - name: Restore dependencies
-      run: dotnet restore
+      # Restore NuGet packages
+      - name: Restore dependencies
+        run: nuget restore "HiSuite Proxy.sln"
 
-    - name: Add NuGet Packages
-      run: |
-        dotnet add "HiSuite Proxy/HiSuite Proxy.csproj" package BouncyCastle.Crypto --version 1.8.8
-        dotnet add "HiSuite Proxy/HiSuite Proxy.csproj" package Titanium.Web.Proxy --version 3.1.1344
+      # Build the solution
+      - name: Build solution
+        run: msbuild "HiSuite Proxy.sln" /p:Configuration=Release
 
-    - name: Build solution
-      run: dotnet build --configuration Release
-
-    - name: Run solution
-      run: dotnet run --project "HiSuite Proxy/HiSuite Proxy.csproj"
-
-    - name: Install MSBuild
-      run: choco install visualstudio2019-buildtools -y --ignore-checksums
+      # Upload the built artifact if the build succeeds
+      - name: Upload build artifact
+        if: success() # Only run if the build step succeeds
+        uses: actions/upload-artifact@v3
+        with:
+          name: HiSuite-Proxy-Build
+          path: |
+            **/bin/Release/**
