@@ -25,7 +25,7 @@ jobs:
       run: dotnet restore
 
     - name: Build solution
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration debug
 
     - name: Run solution
       run: dotnet run --project "HiSuite Proxy/HiSuite Proxy.csproj"
