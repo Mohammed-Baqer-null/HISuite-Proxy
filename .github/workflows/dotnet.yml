@@ -21,15 +21,15 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x' # Update this to the version of .NET used by your project
+          dotnet-version: '6.0.x'  # Update this if your project uses a different .NET version
 
       # Restore NuGet packages
       - name: Restore dependencies
-        run: nuget restore "HiSuite Proxy.sln"
+        run: dotnet restore "HiSuite Proxy.sln"
 
       # Build the solution
       - name: Build solution
-        run: msbuild "HiSuite Proxy.sln" /p:Configuration=Release
+        run: dotnet build "HiSuite Proxy.sln" --configuration Release
 
       # Upload the built artifact if the build succeeds
       - name: Upload build artifact
