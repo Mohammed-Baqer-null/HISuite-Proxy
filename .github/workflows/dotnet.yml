@@ -19,13 +19,21 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.x'  # Update this if using a different .NET version
+        dotnet-version: '5.x' # Specify your .NET version
 
     - name: Restore dependencies
       run: dotnet restore
 
+    - name: Add NuGet Packages
+      run: |
+        dotnet add "HiSuite Proxy/HiSuite Proxy.csproj" package BouncyCastle.Crypto --version 1.8.8
+        dotnet add "HiSuite Proxy/HiSuite Proxy.csproj" package Titanium.Web.Proxy --version 3.1.1344
+
     - name: Build solution
-      run: dotnet build --configuration debug
+      run: dotnet build --configuration Release
 
     - name: Run solution
       run: dotnet run --project "HiSuite Proxy/HiSuite Proxy.csproj"
+
+    - name: Install MSBuild
+      run: choco install visualstudio2019-buildtools -y --ignore-checksums
