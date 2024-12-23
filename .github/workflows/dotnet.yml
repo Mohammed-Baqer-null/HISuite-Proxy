@@ -20,10 +20,10 @@ jobs:
       run: nuget restore "HiSuite Proxy.sln"
 
     - name: Build Solution with MSBuild
-      run: msbuild "HiSuite Proxy.sln" /p:Configuration=Release /p:Platform="x64"
+      run: msbuild "HiSuite Proxy.sln" /p:Configuration=Release /p:Platform="Any CPU"
 
-    - name: Publish for Windows x64
-      run: msbuild "HiSuite Proxy.sln" /p:Configuration=Release /p:Platform="x64" /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:PublishUrl=./publish
+    - name: Publish for Windows Any CPU
+      run: msbuild "HiSuite Proxy.sln" /p:Configuration=Release /p:Platform="Any CPU" /p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:PublishUrl=./publish
 
     - name: Upload Artifact
       if: success()  # Only upload if the build and publish steps succeed
